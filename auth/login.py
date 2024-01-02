@@ -75,7 +75,7 @@ class Login:
         """
         return dict(self._client.cookies.items())
 
-    def sign_in_with_email(self):
+    def sign_in_with_email(self) -> bool:
         """
         Signs in to the Huggingface account using the provided email and password.
 
@@ -83,6 +83,11 @@ class Login:
         ------
         httpx.HTTPStatusError
             If the HTTP response status code is not 302 (Redirection), an error is raised.
+
+        Returns
+        -------
+        bool
+            True if login is successful, False otherwise.
         """
         data = {"username": self.email, "password": self.password}
         response = self._client.post(url=CONSTANTS["LOGIN_URL"], data=data)
@@ -91,3 +96,4 @@ class Login:
                 f"Login failed with status code {response.status_code}"
             )
         logger.debug("Login successful")
+        return True

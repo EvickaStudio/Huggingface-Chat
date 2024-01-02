@@ -64,21 +64,23 @@ class AuthenticationManager:
                 user's password
         """
         login = Login(email, password)
-        login.sign_in_with_email()
+        if (
+            login.sign_in_with_email()
+        ):  # sign_in_with_email() returns True if authentication is successful
+            cookies = login.get_cookies()
 
-        # Retrieve the tokens and expiration dates
-        cookies = login.get_cookies()
-
-        # Save the email, password and token to the config file
-        logger.debug("Writing authentication data to config file.")
-        try:
-            self.config.set_login_details(email=email, password=password)
-            # extract token from cookie response
-            for cookie in cookies:
-                if cookie[0] == "token":
-                    self.config.set_token(token=cookie[1])
-        except Exception as e:
-            logger.error(f"Unexpected error occurred: {e}")
+            # Save the email, password and token to the config file
+            logger.debug("Writing authentication data to config file.")
+            try:
+                self.config.set_login_details(email=email, password=password)
+                # extract token from cookie response
+                for cookie in cookies:
+                    if cookie[0] == "token":
+                        self.config.set_token(token=cookie[1])
+            except Exception as e:
+                logger.error(f"Unexpected error occurred: {e}")
+        else:
+            logger.error("Authentication failed.")
 
     def tear_down_authentication(self):
         """
