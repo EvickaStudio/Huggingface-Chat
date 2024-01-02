@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import configparser
 import logging
 import os
@@ -30,9 +31,7 @@ class Config:
 
     def __init__(self, filename="config.ini"):
         self.filename = filename
-        self.config = (
-            configparser.ConfigParser()
-        )  # Initialize the config attribute here
+        self.config = configparser.ConfigParser()
 
         if not os.path.exists(self.filename):
             self._create_config()
@@ -48,30 +47,19 @@ class Config:
     def config_exists(self) -> bool:
         """Check if the configuration file has values for email and password."""
         logger.debug("Checking if configuration file exists.")
-        return bool(self.get_login_details().get("email")) and bool(
-            self.get_login_details().get("password")
-        )
+        return all(self.config["LOGIN"].values())
 
     def get_login_details(self):
         """Return login details as a dictionary."""
         logger.debug("Retrieving login details.")
         return {k: v for k, v in self.config["LOGIN"].items()}
 
-    def set_login_details(self, *, email: str, password: str):
-        """
-        Set login details using email and password.
-
-        Args:
-            email (str): Email address.
-            password (str): Password.
-
-        Raises:
-            AssertionError: If email or password are invalid keyword arguments.
-        """
-        logger.debug(f"Setting login details ({email}, {password}).")
-        details = {"email": email, "password": password}
-        for key, value in details.items():
-            assert key in ["email", "password"], f"Invalid keyword argument '{key}'."
+    def set_login_details(self, **kwargs):
+        """Set login details using kwargs."""
+        logger.debug(f"Setting login details ({', '.join(kwargs)}).")
+        allowed_keys = ("email", "password")
+        for key, value in kwargs.items():
+            assert key in allowed_keys, f"Invalid keyword argument '{key}'."
 
             self.config["LOGIN"].setdefault(key, "")
             self.config["LOGIN"][key] = value
@@ -84,21 +72,12 @@ class Config:
         logger.debug("Retrieving token information.")
         return {k: v for k, v in self.config["TOKEN"].items()}
 
-    def set_token(self, *, token: str, expire_date: str = ""):
-        """
-        Set token information using token and expiration date.
-
-        Args:
-            token (str): Token string.
-            expire_date (str): Expiration date as a string.
-
-        Raises:
-            AssertionError: If token or expire_date are invalid keyword arguments.
-        """
-        logger.debug(f"Setting token information ({token}, {expire_date}).")
-        token_info = {"token": token, "expire_date": expire_date}
-        for key, value in token_info.items():
-            assert key in ["token", "expire_date"], f"Invalid keyword argument '{key}'."
+    def set_token(self, **kwargs):
+        """Set token information using kwargs."""
+        logger.debug(f"Setting token information ({', '.join(kwargs)}).")
+        allowed_keys = ("token", "expire_date")
+        for key, value in kwargs.items():
+            assert key in allowed_keys, f"Invalid keyword argument '{key}'."
 
             self.config["TOKEN"].setdefault(key, "")
             self.config["TOKEN"][key] = value
@@ -106,35 +85,8 @@ class Config:
         with open(self.filename, "w") as f:
             self.config.write(f)
 
-    def save_auth_data(self, email: str, password: str):
-        login_data = {"email": email, "password": password}
-        self.set_login_details(**login_data)
-
-    def load_auth_data(self):
-        email = self.config["LOGIN"]["email"]
-        password = self.config["LOGIN"]["password"]
-
-        # Load tokens and expiration dates too
-        token = self.config["TOKENS"].get("token", "")
-        expiration_date = self.config["TOKENS"].get("expiration_date", "")
-
-        return {
-            "email": email,
-            "password": password,
-            "token": token,
-            "expiration_date": expiration_date,
-        }
-
-    def update_cookies_data(self, cookies: dict):
-        """Update the tokens section of the configuration file."""
-        logger.debug("Updating cookies data.")
-        cookies_dict = dict(cookies)  # Convert ItemsView to dictionary
-        for key, value in cookies_dict.items():
-            self.config["TOKENS"].setdefault(key, "")
-            self.config["TOKENS"][key] = value
-
-        with open(self.filename, "w") as f:
-            self.config.write(f)
+    def save_auth_data(self, *args, **kwargs):
+        self.set_login_details(*args, **kwargs)
 
     def load_auth_data(self):
         """Load authentication data from the configuration file."""
@@ -142,6 +94,9 @@ class Config:
             "email": self.get_login_details().get("email"),
             "password": self.get_login_details().get("password"),
         }
+
+    def update_tokens_data(self, *args, **kwargs):
+        self.set_token(*args, **kwargs)
 
     def delete_section(self, section: str):
         """Delete a section from the configuration file."""
@@ -170,6 +125,6 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     config = Config()
     print(config.is_logged_in)
-    config.set_login_details(email="test@example.com", password="test123")
-    config.set_token(token="abcdefg12345", expire_date="2024-06-09")
+    config.save_auth_data(email="test@example.com", password="test123")
+    config.update_tokens_data(token="abcdefg12345", expire_date="2024-06-09")
     print(config.is_logged_in)
