@@ -26,12 +26,9 @@ try:
     if config_obj.config_exists():
         logging.info(f"Config exists: {str(config_obj.config_exists())}")
 
-        token = config_obj.get_token()
-        if token:
+        if token := config_obj.get_token():
             logging.info(f"Token found in config file: {token}")
             auth_manager = AuthenticationManager()
-            # TODO: Implement token authentication with check
-            # auth_manager.set_up_authentication(token=token)
         else:
             logging.info("No token found in config file, starting authentication.")
             login_details = config_obj.get_login_details()

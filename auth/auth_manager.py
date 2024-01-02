@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import logging
+from typing import Optional
 
 import httpx
 
@@ -24,13 +26,43 @@ logger = logging.getLogger(__name__)
 
 
 class AuthenticationManager:
-    """Manages authentication operations."""
+    """
+    A class to manage authentication operations.
+
+    ...
+
+    Attributes
+    ----------
+    config : Config
+        configuration object to manage application settings
+
+    Methods
+    -------
+    set_up_authentication(email: str, password: str):
+        Sets up authentication using given credentials and saves them to the configuration file.
+    tear_down_authentication():
+        Deletes stored authentication information from the configuration file.
+    authenticate() -> Optional[httpx.Client]:
+        Authenticates using previously saved credentials and returns an authenticated HTTP client.
+    """
 
     def __init__(self):
+        """
+        Constructs all the necessary attributes for the AuthenticationManager object.
+        """
         self.config = Config()
 
     def set_up_authentication(self, email: str, password: str):
-        """Sets up authentication using given credentials."""
+        """
+        Sets up authentication using given credentials and saves them to the configuration file.
+
+        Parameters
+        ----------
+            email : str
+                user's email address
+            password : str
+                user's password
+        """
         login = Login(email, password)
         login.sign_in_with_email()
 
@@ -49,19 +81,27 @@ class AuthenticationManager:
             logger.error(f"Unexpected error occurred: {e}")
 
     def tear_down_authentication(self):
-        """Deletes stored authentication information."""
+        """
+        Deletes stored authentication information from the configuration file.
+        """
         self.config.delete_section("TOKENS")
 
-    def authenticate(self):
-        """Authenticates using previously saved credentials."""
+    def authenticate(self) -> Optional[httpx.Client]:
+        """
+        Authenticates using previously saved credentials and returns an authenticated HTTP client.
+
+        Returns
+        -------
+        httpx.Client
+            An authenticated HTTP client, or None if authentication fails.
+        """
         try:
             user_data = self.config.load_auth_data()
-            client = httpx.Client(
+            return httpx.Client(
                 auth=httpx.BasicAuth(user_data["email"], user_data["password"]),
                 headers={"User-Agent": CONSTANTS["USER_AGENT"]},
                 cookies=self.config.get_token(),
             )
-            return client
         except FileNotFoundError:
             logger.warning("No authentication data found.")
             return None

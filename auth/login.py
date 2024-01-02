@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import logging
+from typing import Dict
 
 import httpx
 
@@ -22,9 +24,39 @@ logger = logging.getLogger(__name__)
 
 
 class Login:
-    """Handles signing in via email."""
+    """
+    A class to handle user login to a Huggingface account via email.
+
+    ...
+
+    Attributes
+    ----------
+    email : str
+        user's email address
+    password : str
+        user's password
+    _client : httpx.Client
+        HTTP client for making requests
+
+    Methods
+    -------
+    get_cookies() -> Dict[str, str]:
+        Returns a dictionary of cookie names and values from the last HTTP response.
+    sign_in_with_email():
+        Signs in to the Huggingface account using the provided email and password.
+    """
 
     def __init__(self, email: str, password: str):
+        """
+        Constructs all the necessary attributes for the Login object.
+
+        Parameters
+        ----------
+            email : str
+                user's email address
+            password : str
+                user's password
+        """
         self.email = email
         self.password = password
         self._client = httpx.Client(
@@ -32,12 +64,26 @@ class Login:
             headers={"User-Agent": CONSTANTS["USER_AGENT"]},
         )
 
-    def get_cookies(self) -> dict:
-        """Returns cookie values from the last HTTP response."""
-        return self._client.cookies.items()
+    def get_cookies(self) -> Dict[str, str]:
+        """
+        Returns a dictionary of cookie names and values from the last HTTP response.
+
+        Returns
+        -------
+        dict
+            A dictionary of cookie names and values.
+        """
+        return dict(self._client.cookies.items())
 
     def sign_in_with_email(self):
-        """Signs in using specified email and password."""
+        """
+        Signs in to the Huggingface account using the provided email and password.
+
+        Raises
+        ------
+        httpx.HTTPStatusError
+            If the HTTP response status code is not 302 (Redirection), an error is raised.
+        """
         data = {"username": self.email, "password": self.password}
         response = self._client.post(url=CONSTANTS["LOGIN_URL"], data=data)
         if response.status_code != 302:
