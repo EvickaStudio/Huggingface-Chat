@@ -45,7 +45,6 @@ class Config:
         self.config["LOGIN"] = {}
         self.config["TOKEN"] = {}
 
-    # check if config exitst with values for email and password
     def config_exists(self) -> bool:
         """Check if the configuration file has values for email and password."""
         logger.debug("Checking if configuration file exists.")
@@ -126,8 +125,6 @@ class Config:
             "expiration_date": expiration_date,
         }
 
-    # # ItemsView(<Cookies[<Cookie token=bIdNwPGMpKERhHfaBsycCNbiDiWMWVundFsrClNMywqzNAcMIRSpHGmwpjYxFdAhIMPlPAXpOyImKicbqMhUfoJeJMtghmdfIaTqnloEetZesitFZKMppTnSjZCtdGjl for .huggingface.co />]>)
-    # parse token from cookie response
     def update_cookies_data(self, cookies: dict):
         """Update the tokens section of the configuration file."""
         logger.debug("Updating cookies data.")
