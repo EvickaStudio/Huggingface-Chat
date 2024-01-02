@@ -16,7 +16,7 @@
 
 # Huggingface Chat 🤗🚀
 
-A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI.
+A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI. The project is not complete and is still under development (Only Login/ Auth is working).
 
 ## Table of Contents
 
