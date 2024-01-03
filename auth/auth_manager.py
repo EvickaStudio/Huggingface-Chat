@@ -29,7 +29,7 @@ class AuthenticationManager:
     r"""
     Authentication manager for Hugging Face APIs.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     A class managing authentication operations for Hugging Face services.
 
     ----
@@ -80,7 +80,9 @@ class AuthenticationManager:
         """
         login = Login(email, password)
 
-        if login.sign_in_with_email():  # sign_in_with_email() returns True if authentication is successful
+        if (
+            login.sign_in_with_email()
+        ):  # sign_in_with_email() returns True if authentication is successful
             cookies = login.get_cookies()
 
             # Persist email, password, and token inside the config file
@@ -95,7 +97,9 @@ class AuthenticationManager:
 
                 return True
             except Exception as e:
-                logger.error(f"Encountered unexpected error during saving credential data: {str(e)}")
+                logger.error(
+                    f"Encountered unexpected error during saving credential data: {str(e)}"
+                )
                 return False
         else:
             logger.error("Failed to complete authentication.")
@@ -123,7 +127,9 @@ class AuthenticationManager:
                 cookies=self.config.get_token(),
             )
         except FileNotFoundError:
-            logger.warning("Configuration file containing authentication data does not exist.")
+            logger.warning(
+                "Configuration file containing authentication data does not exist."
+            )
             return None
         except KeyError as e:
             logger.warning(f"Missing key '{e}' within loaded authentication data.")
