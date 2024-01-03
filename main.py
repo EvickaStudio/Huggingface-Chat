@@ -36,7 +36,9 @@ try:
             password = login_details.get("password")
             logging.info(f"Email: {email}, Password: {password}")
             auth_manager = AuthenticationManager()
-            auth_manager.set_up_authentication(email, password)
+
+            if auth_manager.set_up_authentication(email, password):
+                logging.info("Login and token set up was successful.")
 
     else:
         logging.info("Config doesn't exist, setting up initial configurations.")
@@ -48,5 +50,5 @@ try:
 except KeyError:
     logging.error("Login details missing in config file.")
 
-session = auth_manager.authenticate()
-logging.info(session)
+# session = auth_manager.authenticate()
+# logging.info(session)

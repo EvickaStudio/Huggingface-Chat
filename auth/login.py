@@ -24,17 +24,20 @@ logger = logging.getLogger(__name__)
 
 
 class Login:
-    """
+    r"""
+    Login handler for Hugging Face APIs.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     A class to handle user login to a Huggingface account via email.
 
-    ...
+    ----
 
     Attributes
     ----------
     email : str
-        user's email address
+        User's email address
     password : str
-        user's password
+        User's password
     _client : httpx.Client
         HTTP client for making requests
 
@@ -42,8 +45,16 @@ class Login:
     -------
     get_cookies() -> Dict[str, str]:
         Returns a dictionary of cookie names and values from the last HTTP response.
-    sign_in_with_email():
+    sign_in_with_email() -> bool:
         Signs in to the Huggingface account using the provided email and password.
+
+    Example
+    -------
+    >>> from auth.login import Login
+    >>>
+    >>> login = Login(email, password)
+    >>> login.sign_in_with_email()
+    True
     """
 
     def __init__(self, email: str, password: str):
@@ -52,10 +63,10 @@ class Login:
 
         Parameters
         ----------
-            email : str
-                user's email address
-            password : str
-                user's password
+        email : str
+            User's email address
+        password : str
+            User's password
         """
         self.email = email
         self.password = password

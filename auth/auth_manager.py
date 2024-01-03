@@ -26,90 +26,108 @@ logger = logging.getLogger(__name__)
 
 
 class AuthenticationManager:
-    """
-    A class to manage authentication operations.
+    r"""
+    Authentication manager for Hugging Face APIs.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    A class managing authentication operations for Hugging Face services.
 
-    ...
+    ----
 
     Attributes
     ----------
     config : Config
-        configuration object to manage application settings
+        Object holding the configurations and settings.
 
     Methods
     -------
-    set_up_authentication(email: str, password: str):
-        Sets up authentication using given credentials and saves them to the configuration file.
-    tear_down_authentication():
-        Deletes stored authentication information from the configuration file.
-    authenticate() -> Optional[httpx.Client]:
-        Authenticates using previously saved credentials and returns an authenticated HTTP client.
+    set_up_authentication(email: str, password: str) -> bool
+        Setups authentication using the given credentials and persists them into the configuration file.
+    tear_down_authentication()
+        Tears down the authentication by removing stored authentication info from the configuration file.
+    authenticate() -> Optional[httpx.Client]
+        Performs authentication using saved credentials and yields an authenticated HTTP client instance.
+
+    Example
+    -------
+    >>> from auth.auth_manager import AuthenticationManager
+    >>>
+    >>> auth_manager = AuthenticationManager()
+    >>> auth_manager.set_up_authentication(email, password)
+    True
+    >>> session = auth_manager.authenticate()
     """
 
     def __init__(self):
-        """
-        Constructs all the necessary attributes for the AuthenticationManager object.
-        """
+        """Creates instances needed for the Authentication Manager."""
         self.config = Config()
 
-    def set_up_authentication(self, email: str, password: str):
+    def set_up_authentication(self, email: str, password: str) -> bool:
         """
-        Sets up authentication using given credentials and saves them to the configuration file.
+        Setups authentication using the given credentials and persists them into the configuration file.
 
         Parameters
         ----------
-            email : str
-                user's email address
-            password : str
-                user's password
+        email : str
+            User's email address
+        password : str
+            User's password
+
+        Returns
+        -------
+        bool
+            Indicates whether the setup was successful or not.
         """
         login = Login(email, password)
-        if (
-            login.sign_in_with_email()
-        ):  # sign_in_with_email() returns True if authentication is successful
+
+        if login.sign_in_with_email():  # sign_in_with_email() returns True if authentication is successful
             cookies = login.get_cookies()
 
-            # Save the email, password and token to the config file
-            logger.debug("Writing authentication data to config file.")
+            # Persist email, password, and token inside the config file
+            logger.debug("Persisting authentication data to config...")
             try:
                 self.config.set_login_details(email=email, password=password)
-                # extract token from cookie response
+
+                # Extract token from cookie response
                 for cookie in cookies:
                     if cookie[0] == "token":
                         self.config.set_token(token=cookie[1])
+
+                return True
             except Exception as e:
-                logger.error(f"Unexpected error occurred: {e}")
+                logger.error(f"Encountered unexpected error during saving credential data: {str(e)}")
+                return False
         else:
-            logger.error("Authentication failed.")
+            logger.error("Failed to complete authentication.")
+            return False
 
     def tear_down_authentication(self):
-        """
-        Deletes stored authentication information from the configuration file.
-        """
+        """Removes stored authentication information from the configuration file."""
         self.config.delete_section("TOKENS")
 
     def authenticate(self) -> Optional[httpx.Client]:
         """
-        Authenticates using previously saved credentials and returns an authenticated HTTP client.
+        Perform authentication using saved credentials and generates an authenticated HTTP client instance.
 
         Returns
         -------
-        httpx.Client
-            An authenticated HTTP client, or None if authentication fails.
+        httpx.Client | None
+            Instance of authenticated HTTP Client or None if authentication fails.
         """
         try:
             user_data = self.config.load_auth_data()
+
             return httpx.Client(
                 auth=httpx.BasicAuth(user_data["email"], user_data["password"]),
                 headers={"User-Agent": CONSTANTS["USER_AGENT"]},
                 cookies=self.config.get_token(),
             )
         except FileNotFoundError:
-            logger.warning("No authentication data found.")
+            logger.warning("Configuration file containing authentication data does not exist.")
             return None
         except KeyError as e:
-            logger.warning(f"Missing key in authentication data: {e}")
+            logger.warning(f"Missing key '{e}' within loaded authentication data.")
             return None
         except Exception as e:
-            logger.error(f"Unexpected error occurred: {e}")
+            logger.error(f"Encountered unexpected exception: {str(e)}")
             return None
