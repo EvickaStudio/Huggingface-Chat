@@ -22,10 +22,13 @@ logger = logging.getLogger(__name__)
 
 
 class Config:
-    """
+    r"""
+    Configuration handler for Huggingface-Chat.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     A class that handles reading from and writing to a configuration file.
 
-    ...
+    ----
 
     Attributes
     ----------
@@ -58,6 +61,14 @@ class Config:
         Checks whether there is a valid token present.
     user_credentials() -> Dict[str, Optional[str]]:
         Returns user credentials as a dictionary.
+
+    Example
+    -------
+    >>> from utils.config import Config
+    >>>
+    >>> config = Config()
+    >>> config.save_auth_data(email="E-MAIL", password="PASS")
+    >>> config.update_tokens_data(token="TOKEN", expire_date="2024-06-09")
     """
 
     def __init__(self, filename="config.ini"):
