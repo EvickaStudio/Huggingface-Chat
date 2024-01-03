@@ -1,6 +1,6 @@
 # custom files
 *.json
-test/
+tests/
 config.ini
 
 # Byte-compiled / optimized / DLL files
