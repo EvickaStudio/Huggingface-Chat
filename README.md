@@ -26,6 +26,8 @@
 
 A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI. The project is not complete and is still under development (Only Login/ Auth is working).
 
+**PROJECT STATUS:** _Under Development_ 🚧
+
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
@@ -39,7 +41,7 @@ A simple Python application utilizing Hugging Face's chat models as an open-sour
 
 ## Getting Started <a name="getting-started"></a>
 
-\_
+
 
 ### Prerequisites <a name="prerequisites"></a>
 
