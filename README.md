@@ -22,6 +22,8 @@
   <a href="https://github.com/EvickaStudio/Huggingface-Chat/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/EvickaStudio/Huggingface-Chat"></a>
   <a href="https://github.com/EvickaStudio/Huggingface-Chat/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/EvickaStudio/Huggingface-Chat"></a>
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/EvickaStudio/Huggingface-Chat">
+  <img alt="Watchers" src="https://img.shields.io/github/watchers/EvickaStudio/Huggingface-Chat?style=flat&logo=github">
+  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/EvickaStudio/Huggingface-Chat">
 </p>
 
 A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI.
