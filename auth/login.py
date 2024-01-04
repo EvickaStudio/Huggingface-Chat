@@ -103,8 +103,11 @@ class Login:
         data = {"username": self.email, "password": self.password}
         response = self._client.post(url=CONSTANTS["LOGIN_URL"], data=data)
         if response.status_code != 302:
+            request = self._client.build_request("POST", url=CONSTANTS["LOGIN_URL"])
             raise httpx.HTTPStatusError(
-                f"Login failed with status code {response.status_code}"
+                f"Login failed with status code {response.status_code}",
+                request=request,
+                response=response,
             )
         logger.debug("Login successful")
         return True
