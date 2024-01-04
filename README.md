@@ -43,7 +43,7 @@ A simple Python application utilizing Hugging Face's chat models as an open-sour
 
 ### Prerequisites <a name="prerequisites"></a>
 
-To run the application locally, please ensure the following prerequisites are met:
+To run the application locally, please ensure the following prerequisites are met (optional when no new major features are added)
 
 - **Python >=3.8**
 - **httpx ~0.26.0**
