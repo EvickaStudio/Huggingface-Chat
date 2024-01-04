@@ -94,17 +94,34 @@ class Config:
         self.config["LOGIN"] = {}
         self.config["TOKEN"] = {}
 
-    def config_exists(self) -> bool:
+    def config_exists(self, config_name: str = "config.ini") -> bool:
         """
-        Checks if the configuration file has values for email and password.
+        Checks if the configuration file exists and has values for email and password.
+
+        Parameters
+        ----------
+            config_name : str
+                The name of the configuration file. Defaults to 'config.ini'.
 
         Returns
         -------
         bool
-            True if the configuration file has values for email and password, False otherwise.
+            True if the configuration file exists and has values for email and password, False otherwise.
         """
         logger.debug("Checking if configuration file exists.")
-        return all(self.config["LOGIN"].values())
+        # check if config_name file exist in the current directory
+        if os.path.exists(config_name):
+            # read config_name file
+            self.config.read(config_name)
+            # check if the file has both email and password
+            if (
+                self.config.has_option("LOGIN", "email")
+                and self.config.has_option("LOGIN", "password")
+                and self.config.get("LOGIN", "email")
+                and self.config.get("LOGIN", "password")
+            ):
+                return True
+        return False
 
     def get_login_details(self) -> Dict[str, str]:
         """
