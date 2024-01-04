@@ -116,7 +116,10 @@ class Config:
             A dictionary of login details.
         """
         logger.debug("Retrieving login details.")
-        return dict(self.config["LOGIN"].items())
+        return {
+            "email": self.config.get("LOGIN", "email", fallback=""),
+            "password": self.config.get("LOGIN", "password", fallback=""),
+        }
 
     def set_login_details(self, **kwargs):
         """
@@ -131,9 +134,8 @@ class Config:
         allowed_keys = ("email", "password")
         for key, value in kwargs.items():
             assert key in allowed_keys, f"Invalid keyword argument '{key}'."
-
-            self.config["LOGIN"].setdefault(key, "")
-            self.config["LOGIN"][key] = value
+            if value is not None:
+                self.config["LOGIN"][key] = value
 
         with open(self.filename, "w") as f:
             self.config.write(f)
@@ -148,7 +150,10 @@ class Config:
             A dictionary of token information.
         """
         logger.debug("Retrieving token information.")
-        return dict(self.config["TOKEN"].items())
+        return {
+            "token": self.config.get("TOKEN", "token", fallback=""),
+            "expire_date": self.config.get("TOKEN", "expire_date", fallback=""),
+        }
 
     def set_token(self, **kwargs):
         """
@@ -163,9 +168,8 @@ class Config:
         allowed_keys = ("token", "expire_date")
         for key, value in kwargs.items():
             assert key in allowed_keys, f"Invalid keyword argument '{key}'."
-
-            self.config["TOKEN"].setdefault(key, "")
-            self.config["TOKEN"][key] = value
+            if value is not None:
+                self.config["TOKEN"][key] = value
 
         with open(self.filename, "w") as f:
             self.config.write(f)
