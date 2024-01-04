@@ -24,9 +24,10 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/EvickaStudio/Huggingface-Chat">
 </p>
 
-A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI. The project is not complete and is still under development (Only Login/ Auth is working).
+A simple Python application utilizing Hugging Face's chat models as an open-source alternative to OpenAI.
 
-**PROJECT STATUS:** _Under Development_ 🚧
+> [!IMPORTANT]
+> The project is not complete and is still under development (Only Login/ Auth is working).
 
 ## Table of Contents
 
@@ -40,8 +41,6 @@ A simple Python application utilizing Hugging Face's chat models as an open-sour
 6. [Contact Us](#contact-us)
 
 ## Getting Started <a name="getting-started"></a>
-
-
 
 ### Prerequisites <a name="prerequisites"></a>
 
