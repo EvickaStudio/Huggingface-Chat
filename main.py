@@ -34,8 +34,8 @@ try:
         else:  # If no token can be found, its starts a login process with email, password from file
             logging.info("No token found in config file, starting authentication.")
             login_details = config_obj.get_login_details()
-            email = login_details.get("email")
-            password = login_details.get("password")
+            email = str(login_details.get("email"))
+            password = str(login_details.get("password"))
             auth_manager = AuthenticationManager()
             auth_manager.set_up_authentication(email, password)
 
