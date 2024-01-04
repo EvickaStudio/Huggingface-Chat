@@ -64,7 +64,7 @@ class AuthenticationManager:
 
     def set_up_authentication(self, email: str, password: str) -> bool:
         """
-        Setups authentication using the given credentials and persists them into the configuration file.
+        Set up authentication using the given credentials and persist them into the configuration file.
 
         Parameters
         ----------
@@ -80,22 +80,11 @@ class AuthenticationManager:
         """
         login = Login(email, password)
 
-        if (
-            login.sign_in_with_email()
-        ):  # sign_in_with_email() returns True if authentication is successful
+        if login.sign_in_with_email():
             cookies = login.get_cookies()
 
-            # Persist email, password, and token inside the config file
-            logger.debug("Persisting authentication data to config...")
             try:
-                self.config.set_login_details(email=email, password=password)
-
-                # Extract token from cookie response
-                for cookie in cookies:
-                    if cookie[0] == "token":
-                        self.config.set_token(token=cookie[1])
-
-                return True
+                return self._save_authentication_data(email, password, cookies)
             except Exception as e:
                 logger.error(
                     f"Encountered unexpected error during saving credential data: {str(e)}"
@@ -104,6 +93,15 @@ class AuthenticationManager:
         else:
             logger.error("Failed to complete authentication.")
             return False
+
+    def _save_authentication_data(self, email, password, cookies):
+        self.config.set_login_details(email=email, password=password)
+
+        token = cookies.get("token")
+        logger.debug(f"Token found: {token}")
+        self.config.set_token(token=token)
+
+        return True
 
     def tear_down_authentication(self):
         """Removes stored authentication information from the configuration file."""

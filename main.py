@@ -26,16 +26,18 @@ try:
     if config_obj.config_exists():
         logging.info(f"Config exists: {str(config_obj.config_exists())}")
 
-        if token := config_obj.get_token():
+        token = config_obj.get_token()
+
+        if token is not None and token != {"token": "", "expire_date": ""}:
             logging.info(f"Token found in config file: {token}")
             auth_manager = AuthenticationManager()
-        else:
+        else:  # If no token can be found, its starts a login process with email, password from file
             logging.info("No token found in config file, starting authentication.")
             login_details = config_obj.get_login_details()
             email = login_details.get("email")
             password = login_details.get("password")
-            logging.info(f"Email: {email}, Password: {password}")
             auth_manager = AuthenticationManager()
+            auth_manager.set_up_authentication(email, password)
 
             if auth_manager.set_up_authentication(email, password):
                 logging.info("Login and token set up was successful.")
