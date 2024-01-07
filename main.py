@@ -14,6 +14,7 @@
 
 
 import logging
+import os
 
 from auth.auth_manager import AuthenticationManager
 from utils.config import Config
@@ -36,6 +37,8 @@ try:
             login_details = config_obj.get_login_details()
             email = str(login_details.get("email"))
             password = str(login_details.get("password"))
+            # delete config.ini
+            os.remove("config.ini")
             auth_manager = AuthenticationManager()
             auth_manager.set_up_authentication(email, password)
 
